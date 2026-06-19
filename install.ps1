@@ -49,7 +49,7 @@ $menu = [ordered]@{
     @{ Sub = "PLUGINS & EXTENSIONS" ; Apps = @(
         @{ Name = "StreamElements SE LIVE  ^" ; Id = "" ; Url = "https://streamelements.com/selive" },
         @{ Name = "Social Stream Ninja    ^"  ; Id = "" ; Url = "https://socialstream.ninja/landing" },
-        @{ Name = "Streamlabs Plugin Updater ^" ; Id = "" ; Url = "https://streamlabs.com/content-hub/post/streamlabs-obs-plugins" }
+        @{ Name = "Streamlabs Plugin OBS   ^" ; Id = "" ; Url = "https://streamlabs.com/fr-fr/obs-plugin" }
     )},
     @{ Sub = "MATERIEL & AUDIO" ; Apps = @(
         @{ Name = "NVIDIA Broadcast  ^"             ; Id = "" ; Url = "https://www.nvidia.com/fr-fr/geforce/broadcasting/broadcast-app/" },

@@ -40,7 +40,8 @@ $menu = [ordered]@{
     )
 
     "PLAYSTATION" = @(
-    @{ Name = "PS Remote Play" ; Id = "PlayStation.PSRemotePlay" }
+    @{ Name = "PS Remote Play"          ; Id = "PlayStation.PSRemotePlay" },
+    @{ Name = "Accessories Installer"   ; Id = "PlayStation.PlayStationAccessories" }
 )
 
     "OUTILS SYSTEME" = @(

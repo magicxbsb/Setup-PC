@@ -44,17 +44,16 @@ $menu = [ordered]@{
         @{ Name = "OBS Studio"        ; Id = "OBSProject.OBSStudio"   },
         @{ Name = "Streamlabs Desktop"; Id = "Streamlabs.Streamlabs"  },
         @{ Name = "TikTok Live Studio ^" ; Id = "" ; Url = "https://www.tiktok.com/studio/download" },
-        @{ Name = "PRISM Live Studio  ^" ; Id = "" ; Url = "https://prismlive.com/fr_fr/pcapp/" },
-        @{ Name = "SE LIVE            ^" ; Id = "" ; Url = "https://streamelements.com/selive" }
+        @{ Name = "PRISM Live Studio  ^" ; Id = "" ; Url = "https://prismlive.com/fr_fr/pcapp/" }
     )},
     @{ Sub = "PLUGINS & EXTENSIONS" ; Apps = @(
-        @{ Name = "StreamElements for OBS  ^" ; Id = "" ; Url = "https://streamelements.com/overlay-tool" },
+        @{ Name = "StreamElements SE LIVE  ^" ; Id = "" ; Url = "https://streamelements.com/selive" },
         @{ Name = "Social Stream Ninja    ^"  ; Id = "" ; Url = "https://socialstream.ninja/landing" },
         @{ Name = "Streamlabs Plugin Updater ^" ; Id = "" ; Url = "https://streamlabs.com/content-hub/post/streamlabs-obs-plugins" }
     )},
     @{ Sub = "MATERIEL & AUDIO" ; Apps = @(
-        @{ Name = "NVIDIA Broadcast  ^" ; Id = "" ; Url = "https://www.nvidia.com/fr-fr/geforce/broadcasting/broadcast-app/" },
-        @{ Name = "Ground Control    ^" ; Id = "" ; Url = "https://www.ground-control.io/" }
+        @{ Name = "NVIDIA Broadcast  ^"             ; Id = "" ; Url = "https://www.nvidia.com/fr-fr/geforce/broadcasting/broadcast-app/" },
+        @{ Name = "StreamElements Ground Control ^" ; Id = "" ; Url = "https://www.ground-control.io/" }
     )}
 )
 

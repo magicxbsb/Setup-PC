@@ -73,20 +73,16 @@ $menu = [ordered]@{
 
     "PERIPHERIQUES" = @(
         @{ Sub = "LIAN LI" ; Apps = @(
-            @{ Name = "L-Connect 3" ; Id = "" ; Url = "https://lian-li.com/l-connect3/" }
+            @{ Name = "L-Connect3  ^"                     ; Id = "" ; Url = "https://lian-li.com/l-connect3/" },
+            @{ Name = "L-Connect3 (Beta)  ^"              ; Id = "" ; Url = "https://lian-li.com/l-connect3-beta-2/" },
+            @{ Name = "L-Connect3 × OpenRGB (Beta)  ^"    ; Id = "" ; Url = "https://lian-li.com/l-connect-3-x-openrgb/" }
         )},
         @{ Sub = "CASQUE" ; Apps = @(
             @{ Name = "SteelSeries GG" ; Id = "SteelSeries.GG" }
         )},
-        @{ Sub = "SOURIS" ; Apps = @(
-            @{ Name = "ATK Hub" ; Id = "" ; Url = "https://atk.gg/" }
-        )},
-        @{ Sub = "CLAVIER" ; Apps = @(
-            @{ Name = "Halo65 Firmware" ; Id = "" ; Url = "https://kzzi.com/" }
-        )},
         @{ Sub = "ECRAN" ; Apps = @(
-            @{ Name = "AOC G-Menu"       ; Id = "" ; Url = "https://aoc.com/uk/gaming/g-menu" },
-            @{ Name = "ASUS DisplayWidget" ; Id = "" ; Url = "https://www.asus.com/supportonly/displaywidget/" }
+            @{ Name = "AOC G-Menu  ^"         ; Id = "" ; Url = "https://www.aoc.com/fr/gaming/gmenu" },
+            @{ Name = "ASUS DisplayWidget  ^" ; Id = "" ; Url = "https://www.asus.com/supportonly/displaywidget/" }
         )}
     )
 

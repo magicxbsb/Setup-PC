@@ -104,6 +104,8 @@ $C = @{
 $FallbackUrls = @{
     "Elgato" = "https://www.elgato.com/fr/fr/s/downloads"
     "PlayStation" = "https://www.playstation.com/fr-fr/remote-play/"
+    "OBSProject"  = "https://obsproject.com/fr/download"
+    "Streamlabs"  = "https://streamlabs.com/streamlabs-live-streaming-software"
     # "Logitech" = "https://support.logi.com/hc/fr/categories/360001751833"
 }
 

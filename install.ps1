@@ -40,37 +40,35 @@ $menu = [ordered]@{
     )
 
     "STREAM" = @(
-    @{ Sub = "LOGICIELS STREAM" ; Apps = @(
-        @{ Name = "OBS Studio"        ; Id = "OBSProject.OBSStudio"   },
-        @{ Name = "Streamlabs Desktop"; Id = "Streamlabs.Streamlabs"  },
-        @{ Name = "TikTok Live Studio ^" ; Id = "" ; Url = "https://www.tiktok.com/studio/download" },
-        @{ Name = "PRISM Live Studio  ^" ; Id = "" ; Url = "https://prismlive.com/en_us/desktop.html" }
-    )},
-    @{ Sub = "PLUGINS & EXTENSIONS" ; Apps = @(
-        @{ Name = "StreamElements SE LIVE  ^" ; Id = "" ; Url = "https://streamelements.com/selive" },
-        @{ Name = "Social Stream Ninja    ^"  ; Id = "" ; Url = "https://socialstream.ninja/landing" },
-        @{ Name = "Streamlabs Plugin OBS   ^" ; Id = "" ; Url = "https://streamlabs.com/fr-fr/obs-plugin" }
-    )},
-    @{ Sub = "MATERIEL & AUDIO" ; Apps = @(
-        @{ Name = "NVIDIA Broadcast  ^"             ; Id = "" ; Url = "https://www.nvidia.com/fr-fr/geforce/broadcasting/broadcast-app/" },
-        @{ Name = "StreamElements Ground Control ^" ; Id = "" ; Url = "https://streamelements.com/groundcontrol" }
-    )}
-)
+        @{ Sub = "LOGICIELS STREAM" ; Apps = @(
+            @{ Name = "OBS Studio"        ; Id = "OBSProject.OBSStudio"   },
+            @{ Name = "Streamlabs Desktop"; Id = "Streamlabs.Streamlabs"  },
+            @{ Name = "TikTok Live Studio ^" ; Id = "" ; Url = "https://www.tiktok.com/studio/download"   },
+            @{ Name = "PRISM Live Studio  ^" ; Id = "" ; Url = "https://prismlive.com/en_us/desktop.html" }
+        )},
+        @{ Sub = "PLUGINS & EXTENSIONS" ; Apps = @(
+            @{ Name = "StreamElements SE LIVE  ^" ; Id = "" ; Url = "https://streamelements.com/selive"  },
+            @{ Name = "Social Stream Ninja    ^"  ; Id = "" ; Url = "https://socialstream.ninja/landing" },
+            @{ Name = "Streamlabs Plugin OBS   ^" ; Id = "" ; Url = "https://streamlabs.com/fr-fr/obs-plugin" }
+        )},
+        @{ Sub = "MATERIEL & AUDIO" ; Apps = @(
+            @{ Name = "NVIDIA Broadcast  ^"             ; Id = "" ; Url = "https://www.nvidia.com/fr-fr/geforce/broadcasting/broadcast-app/" },
+            @{ Name = "StreamElements Ground Control ^" ; Id = "" ; Url = "https://streamelements.com/groundcontrol" }
+        )}
+    )
 
     "PLAYSTATION" = @(
-    @{ Name = "PS Remote Play"          ; Id = "PlayStation.PSRemotePlay" },
-    @{ Name = "Accessories Installer"   ; Id = "PlayStation.PlayStationAccessories" }
-)
+        @{ Name = "PS Remote Play"          ; Id = "PlayStation.PSRemotePlay" },
+        @{ Name = "Accessories Installer"   ; Id = "PlayStation.PlayStationAccessories" }
+    )
 
     "OUTILS SYSTEME" = @(
-        @{ Name = "CPU-Z"          ; Id = "CPUID.CPU-Z"               },
-        @{ Name = "Notepad++"      ; Id = "Notepad++.Notepad++"       },
+        @{ Name = "CPU-Z"          ; Id = "CPUID.CPU-Z"                },
         @{ Name = "Process Lasso"  ; Id = "Bitsum.ProcessLasso"        },
         @{ Name = "TreeSize Free"  ; Id = "JAMSoftware.TreeSize.Free"  }
     )
 
     "AUDIO / VIDEO" = @(
-        @{ Name = "OBS Studio" ; Id = "OBSProject.OBSStudio"        },
         @{ Name = "VirtualDJ"  ; Id = "AtomixProductions.VirtualDJ"  },
         @{ Name = "VLC"        ; Id = "VideoLAN.VLC"                 },
         @{ Name = "Handbrake"  ; Id = "HandBrake.HandBrake"          }
@@ -78,6 +76,7 @@ $menu = [ordered]@{
 
     "DEVELOPPEMENT" = @(
         @{ Name = "VS Code"          ; Id = "Microsoft.VisualStudioCode"  },
+        @{ Name = "Notepad++"        ; Id = "Notepad++.Notepad++"         },
         @{ Name = "Git"              ; Id = "Git.Git"                     },
         @{ Name = "Windows Terminal" ; Id = "Microsoft.WindowsTerminal"   }
     )

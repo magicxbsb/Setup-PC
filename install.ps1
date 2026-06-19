@@ -45,6 +45,7 @@ $menu = [ordered]@{
         @{ Name = "Streamlabs Desktop"; Id = "Streamlabs.Streamlabs"  },
         @{ Name = "TikTok Live Studio ^" ; Id = "" ; Url = "https://www.tiktok.com/studio/download" },
         @{ Name = "PRISM Live Studio  ^" ; Id = "" ; Url = "https://prismlive.com/fr_fr/pcapp/" },
+        @{ Name = "SE LIVE            ^" ; Id = "" ; Url = "https://streamelements.com/selive" }
     )},
     @{ Sub = "PLUGINS & EXTENSIONS" ; Apps = @(
         @{ Name = "StreamElements for OBS  ^" ; Id = "" ; Url = "https://streamelements.com/overlay-tool" },

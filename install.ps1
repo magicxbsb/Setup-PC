@@ -14,14 +14,23 @@ $menu = [ordered]@{
 
     "ELGATO" = @(
         @{ Sub = "STREAM DECK" ; Apps = @(
-            @{ Name = "Stream Deck"  ; Id = "Elgato.StreamDeck" },
-            @{ Name = "Wave Link"    ; Id = "Elgato.WaveLink"   }
+            @{ Name = "Stream Deck"    ; Id = "Elgato.StreamDeck" },
+            @{ Name = "Wave Link"      ; Id = "Elgato.WaveLink"   },
+            @{ Name = "Studio"         ; Id = "Elgato.Studio"     },
+            @{ Name = "Control Center" ; Id = "Elgato.ControlCenter" }
         )},
         @{ Sub = "CAPTURE" ; Apps = @(
-            @{ Name = "4K Capture Utility" ; Id = "Elgato.4KCaptureUtility" },
-            @{ Name = "Camera Hub"         ; Id = "Elgato.CameraHub"        }
+            @{ Name = "4K Capture Utility"    ; Id = "Elgato.4KCaptureUtility"        },
+            @{ Name = "Camera Hub"            ; Id = "Elgato.CameraHub"               },
+            @{ Name = "Game Capture 4K60 Pro" ; Id = "Elgato.GameCapture.4K60ProMK2"  },
+            @{ Name = "Game Capture HD"       ; Id = "Elgato.GameCapture.HD"          },
+            @{ Name = "Game Capture HD60 S"   ; Id = "Elgato.GameCapture.HD60S"       }
+        )},
+        @{ Sub = "CAMERA" ; Apps = @(
+            @{ Name = "EpocCam (drivers)" ; Id = "Elgato.EpocCam" }
         )}
     )
+
 
     "OUTILS SYSTEME" = @(
         @{ Name = "CPU-Z"          ; Id = "CPUID.CPU-Z"              },

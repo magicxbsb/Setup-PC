@@ -66,8 +66,7 @@ $menu = [ordered]@{
             @{ Name = "OCCT Beta"            ; Id = "" ; Url = "https://www.ocbase.com/download" }
         )},
         @{ Sub = "UTILITAIRES" ; Apps = @(
-            @{ Name = "MSI Center" ; Id = "Micro-StarInternational.MSICenter" },
-            @{ Name = "SignalRGB"  ; Id = "WhirlwindFX.SignalRGB" },
+            @{ Name = "SignalRGB"  ; Id ="" ; Url = "https://signalrgb.com/" },
             @{ Name = "Encrypto"   ; Id = "MacPaw.Encrypto" }
         )}
     )

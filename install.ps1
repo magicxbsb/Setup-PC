@@ -1,48 +1,46 @@
-$apps = @{
-    "1" = @{ Name = "WinRAR"; Id = "RARLab.WinRAR" }
-    "2" = @{ Name = "OBS Studio"; Id = "OBSProject.OBSStudio" }
-    "3" = @{ Name = "CPU-Z"; Id = "CPUID.CPU-Z" }
-    "4" = @{ Name = "Rockstar Launcher"; Id = "RockstarGames.Launcher" }
-    "5" = @{ Name = "SteelSeries GG"; Id = "SteelSeries.GG" }
-}
+$apps = @(
+    @{ Name = "WinRAR"; Id = "RARLab.WinRAR" },
+    @{ Name = "OBS Studio"; Id = "OBSProject.OBSStudio" },
+    @{ Name = "CPU-Z"; Id = "CPUID.CPU-Z" },
+    @{ Name = "Rockstar Launcher"; Id = "RockstarGames.Launcher" },
+    @{ Name = "SteelSeries GG"; Id = "SteelSeries.GG" }
+)
 
 Clear-Host
-Write-Host "=== VERIFICATEUR DE VERSIONS OBLIGATOIRE ===" -ForegroundColor Cyan
+Write-Host "=== SYSTEME DE MISE A JOUR SEQUENTIEL ===" -ForegroundColor Cyan
 
-foreach ($key in ($apps.Keys | Sort-Object)) {
-    $app = $apps[$key]
+foreach ($app in $apps) {
+    Write-Host "`n-------------------------------------------"
+    Write-Host "Analyse de $($app.Name)..." -ForegroundColor Yellow
     
-    # 1. Récupération version locale
-    $localCheck = winget list --id $app.Id --exact 2>$null | Select-String $app.Id
-    $localVer = "Non installé"
-    if ($localCheck) {
-        $localVer = (-split $localCheck)[2]
-    }
+    # Récupération des versions
+    $localCheck = winget list --id $app.Id --exact --accept-source-agreements 2>$null | Select-String $app.Id
+    $localVer = if ($localCheck) { (-split $localCheck)[2] } else { "Non installé" }
 
-    # 2. Récupération version officielle en ligne
-    $repoCheck = winget search --id $app.Id --exact 2>$null | Select-String $app.Id
-    $latestVer = "Inconnu"
-    if ($repoCheck) {
-        $latestVer = (-split $repoCheck)[2]
-    }
+    $repoCheck = winget search --id $app.Id --exact --accept-source-agreements 2>$null | Select-String $app.Id
+    $latestVer = if ($repoCheck) { (-split $repoCheck)[2] } else { "Inconnu" }
 
-    Write-Host "[$key] $($app.Name)" -ForegroundColor Yellow
-    Write-Host "    -> Version actuelle : $localVer"
-    Write-Host "    -> Version officielle : $latestVer"
+    # Affichage
+    Write-Host "Version Actuelle   : $localVer"
+    Write-Host "Version Officielle : $latestVer"
+
+    # Boucle de décision
+    $valide = $false
+    while (-not $valide) {
+        $choix = Read-Host "Mettre a jour / Installer ? (O/N)"
+        if ($choix -match '^[oO]$') {
+            Write-Host "Action : Installation de $($app.Name)..." -ForegroundColor Green
+            winget install --id $app.Id --exact --accept-source-agreements --accept-package-agreements
+            $valide = $true
+        } elseif ($choix -match '^[nN]$') {
+            Write-Host "Action : Ignoré." -ForegroundColor DarkGray
+            $valide = $true
+        } else {
+            Write-Host "Erreur : Saisie invalide. Tapez O ou N." -ForegroundColor Red
+        }
+    }
 }
 
-Write-Host "-------------------------------------------"
-$choix = Read-Host "Entrez le numéro de l'appli à installer/mettre à jour (ou 'q' pour quitter)"
-
-if ($choix -eq 'q') { exit }
-
-if ($apps.ContainsKey($choix)) {
-    $appId = $apps[$choix].Id
-    Write-Host "Exécution de la commande officielle..." -ForegroundColor Green
-    winget install --id $appId --exact --accept-source-agreements --accept-package-agreements
-} else {
-    Write-Host "Erreur : Saisie invalide." -ForegroundColor Red
-}
-
-Write-Host "Processus terminé. Fermeture dans 5 secondes."
+Write-Host "`n==========================================="
+Write-Host "Processus global termine. Fermeture dans 5 secondes."
 Start-Sleep -Seconds 5

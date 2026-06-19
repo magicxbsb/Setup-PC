@@ -57,6 +57,38 @@ $menu = [ordered]@{
         )}
     )
 
+    "ESSENTIELS" = @(
+        @{ Sub = "MONITORING" ; Apps = @(
+            @{ Name = "HWiNFO"        ; Id = "REALiX.HWiNFO" },
+            @{ Name = "MSI Afterburner"; Id = "Guru3D.Afterburner" },
+            @{ Name = "OCCT"          ; Id = "OCBASE.OCCT" }
+        )},
+        @{ Sub = "UTILITAIRES" ; Apps = @(
+            @{ Name = "MSI Center" ; Id = "Micro-StarInternational.MSICenter" },
+            @{ Name = "SignalRGB"  ; Id = "WhirlwindFX.SignalRGB" },
+            @{ Name = "Encrypto"   ; Id = "MacPaw.Encrypto" }
+        )}
+    )
+
+    "PERIPHERIQUES" = @(
+        @{ Sub = "LIAN LI" ; Apps = @(
+            @{ Name = "L-Connect 3" ; Id = "" ; Url = "https://lian-li.com/l-connect3/" }
+        )},
+        @{ Sub = "CASQUE" ; Apps = @(
+            @{ Name = "SteelSeries GG" ; Id = "SteelSeries.GG" }
+        )},
+        @{ Sub = "SOURIS" ; Apps = @(
+            @{ Name = "ATK Hub" ; Id = "" ; Url = "https://atk.gg/" }
+        )},
+        @{ Sub = "CLAVIER" ; Apps = @(
+            @{ Name = "Halo65 Firmware" ; Id = "" ; Url = "https://kzzi.com/" }
+        )},
+        @{ Sub = "ECRAN" ; Apps = @(
+            @{ Name = "AOC G-Menu"       ; Id = "" ; Url = "https://aoc.com/uk/gaming/g-menu" },
+            @{ Name = "ASUS DisplayWidget" ; Id = "" ; Url = "https://www.asus.com/supportonly/displaywidget/" }
+        )}
+    )
+
     "PLAYSTATION" = @(
         @{ Name = "PS Remote Play"          ; Id = "PlayStation.PSRemotePlay" },
         @{ Name = "Accessories Installer"   ; Id = "PlayStation.PlayStationAccessories" }

@@ -52,7 +52,7 @@ $menu = [ordered]@{
             @{ Name = "Streamlabs Plugin OBS   ^" ; Id = "" ; Url = "https://streamlabs.com/fr-fr/obs-plugin" }
         )},
         @{ Sub = "MATERIEL & AUDIO" ; Apps = @(
-            @{ Name = "NVIDIA Broadcast  ^"             ; Id = "" ; Url = "https://www.nvidia.com/fr-fr/geforce/broadcasting/broadcast-app/" },
+            @{ Name = "NVIDIA Broadcast"                ; Id = "Nvidia.Broadcast" },
             @{ Name = "StreamElements Ground Control ^" ; Id = "" ; Url = "https://streamelements.com/groundcontrol" }
         )}
     )

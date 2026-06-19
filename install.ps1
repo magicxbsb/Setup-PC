@@ -29,10 +29,10 @@ $menu = [ordered]@{
         @{ Sub = "CAPTURE" ; Apps = @(
             @{ Name = "4K Capture Utility"    ; Id = "Elgato.4KCaptureUtility"       },
             @{ Name = "Camera Hub"            ; Id = "Elgato.CameraHub"              },
-            @{ Name = "Video Capture  ^"      ; Id = "" ; Url = "https://www.elgato.com/fr/fr/s/downloads" },
             @{ Name = "Game Capture 4K60 Pro" ; Id = "Elgato.GameCapture.4K60ProMK2" },
             @{ Name = "Game Capture HD"       ; Id = "Elgato.GameCapture.HD"         },
-            @{ Name = "Game Capture HD60 S"   ; Id = "Elgato.GameCapture.HD60S"      }
+            @{ Name = "Game Capture HD60 S"   ; Id = "Elgato.GameCapture.HD60S"      },
+            @{ Name = "Video Capture  ^"      ; Id = "" ; Url = "https://www.elgato.com/fr/fr/s/downloads" }
         )},
         @{ Sub = "CAMERA" ; Apps = @(
             @{ Name = "EpocCam (drivers)" ; Id = "Elgato.EpocCam" }
@@ -52,7 +52,7 @@ $menu = [ordered]@{
             @{ Name = "Streamlabs Plugin OBS   ^" ; Id = "" ; Url = "https://streamlabs.com/fr-fr/obs-plugin" }
         )},
         @{ Sub = "MATERIEL & AUDIO" ; Apps = @(
-            @{ Name = "NVIDIA Broadcast"                ; Id = "Nvidia.Broadcast" },
+            @{ Name = "NVIDIA Broadcast  ^"             ; Id = "" ; Url = "https://www.nvidia.com/fr-fr/geforce/broadcasting/broadcast-app/" },
             @{ Name = "StreamElements Ground Control ^" ; Id = "" ; Url = "https://streamelements.com/groundcontrol" }
         )}
     )

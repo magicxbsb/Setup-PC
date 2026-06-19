@@ -99,15 +99,16 @@ function Get-AllInstalledVersions {
     return $map
 }
 
-# ── Version disponible sur une source donnée ──────────────────────────────────
+# ── Version disponible sur une source donnée (winget show) ───────────────────
 function Get-AvailableVersion {
     param($Id, $Source)
     try {
-        $raw = winget search --id $Id --exact --source $Source `
-               --accept-source-agreements 2>$null | Select-String $Id
-        if ($raw) {
-            $parts = ($raw -split '\s{2,}') | Where-Object { $_ -ne '' }
-            if ($parts.Count -ge 3) { return $parts[2].Trim() }
+        $raw = winget show --id $Id --exact --source $Source `
+               --accept-source-agreements 2>$null
+        # Cherche la ligne "Version: x.x.x"
+        $line = $raw | Select-String '^\s*Version\s*:\s*(.+)$'
+        if ($line) {
+            return $line.Matches[0].Groups[1].Value.Trim()
         }
     } catch {}
     return $null

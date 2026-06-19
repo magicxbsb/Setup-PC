@@ -39,6 +39,24 @@ $menu = [ordered]@{
         )}
     )
 
+    "STREAM" = @(
+    @{ Sub = "LOGICIELS STREAM" ; Apps = @(
+        @{ Name = "OBS Studio"        ; Id = "OBSProject.OBSStudio"   },
+        @{ Name = "Streamlabs Desktop"; Id = "Streamlabs.Streamlabs"  },
+        @{ Name = "PRISM Live Studio  ^" ; Id = "" ; Url = "https://prismlive.com/fr_fr/pcapp/" },
+        @{ Name = "TikTok Live Studio ^" ; Id = "" ; Url = "https://www.tiktok.com/live/creators/studio/" }
+    )},
+    @{ Sub = "PLUGINS & EXTENSIONS" ; Apps = @(
+        @{ Name = "StreamElements for OBS  ^" ; Id = "" ; Url = "https://streamelements.com/overlay-tool" },
+        @{ Name = "Social Stream Ninja    ^"  ; Id = "" ; Url = "https://socialstream.ninja/landing" },
+        @{ Name = "Streamlabs Plugin Updater ^" ; Id = "" ; Url = "https://streamlabs.com/content-hub/post/streamlabs-obs-plugins" }
+    )},
+    @{ Sub = "MATERIEL & AUDIO" ; Apps = @(
+        @{ Name = "NVIDIA Broadcast  ^" ; Id = "" ; Url = "https://www.nvidia.com/fr-fr/geforce/broadcasting/broadcast-app/" },
+        @{ Name = "Ground Control    ^" ; Id = "" ; Url = "https://www.ground-control.io/" }
+    )}
+)
+
     "PLAYSTATION" = @(
     @{ Name = "PS Remote Play"          ; Id = "PlayStation.PSRemotePlay" },
     @{ Name = "Accessories Installer"   ; Id = "PlayStation.PlayStationAccessories" }

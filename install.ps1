@@ -1,14 +1,18 @@
 # ==============================================================================
-#  GESTIONNAIRE DE LOGICIELS — v2.0
+#  GESTIONNAIRE DE LOGICIELS — v3.0
 #  Structure du menu : Groupe > Sous-groupe (optionnel) > Applications
 #
 #  Format d'une entrée :
 #    @{ Name = "Nom affiché" ; Id = "winget.Id" }
 #
-#  Format d'un sous-groupe (clé "Sub") :
-#    @{ Sub = "NOM DU SOUS-GROUPE" ; Apps = @( @{ Name=... ; Id=... }, ... ) }
+#  Format avec source forcée (winget ou msstore) :
+#    @{ Name = "Nom" ; Id = "winget.Id" ; Source = "msstore" }
 #
-#  Tu peux mélanger les deux dans le même groupe.
+#  Format lien web (pas dans winget) :
+#    @{ Name = "Nom ^" ; Id = "" ; Url = "https://..." }
+#
+#  Format sous-groupe :
+#    @{ Sub = "NOM" ; Apps = @( ... ) }
 # ==============================================================================
 $menu = [ordered]@{
 
@@ -23,12 +27,12 @@ $menu = [ordered]@{
             @{ Name = "Default Profile Galleon 100  ^" ; Id = "" ; Url = "https://www.elgato.com/fr/fr/s/downloads" }
         )},
         @{ Sub = "CAPTURE" ; Apps = @(
-            @{ Name = "4K Capture Utility"     ; Id = "Elgato.4KCaptureUtility"        },
-            @{ Name = "Camera Hub"             ; Id = "Elgato.CameraHub"               },
-            @{ Name = "Video Capture  ^"       ; Id = "" ; Url = "https://www.elgato.com/fr/fr/s/downloads" },
-            @{ Name = "Game Capture 4K60 Pro"  ; Id = "Elgato.GameCapture.4K60ProMK2"  },
-            @{ Name = "Game Capture HD"        ; Id = "Elgato.GameCapture.HD"          },
-            @{ Name = "Game Capture HD60 S"    ; Id = "Elgato.GameCapture.HD60S"       }
+            @{ Name = "4K Capture Utility"    ; Id = "Elgato.4KCaptureUtility"       },
+            @{ Name = "Camera Hub"            ; Id = "Elgato.CameraHub"              },
+            @{ Name = "Video Capture  ^"      ; Id = "" ; Url = "https://www.elgato.com/fr/fr/s/downloads" },
+            @{ Name = "Game Capture 4K60 Pro" ; Id = "Elgato.GameCapture.4K60ProMK2" },
+            @{ Name = "Game Capture HD"       ; Id = "Elgato.GameCapture.HD"         },
+            @{ Name = "Game Capture HD60 S"   ; Id = "Elgato.GameCapture.HD60S"      }
         )},
         @{ Sub = "CAMERA" ; Apps = @(
             @{ Name = "EpocCam (drivers)" ; Id = "Elgato.EpocCam" }
@@ -36,23 +40,23 @@ $menu = [ordered]@{
     )
 
     "OUTILS SYSTEME" = @(
-        @{ Name = "CPU-Z"          ; Id = "CPUID.CPU-Z"              },
-        @{ Name = "Notepad++"      ; Id = "Notepad++.Notepad++"      },
-        @{ Name = "Process Lasso"  ; Id = "Bitsum.ProcessLasso"       },
-        @{ Name = "TreeSize Free"  ; Id = "JAMSoftware.TreeSize.Free" }
+        @{ Name = "CPU-Z"          ; Id = "CPUID.CPU-Z"               },
+        @{ Name = "Notepad++"      ; Id = "Notepad++.Notepad++"       },
+        @{ Name = "Process Lasso"  ; Id = "Bitsum.ProcessLasso"        },
+        @{ Name = "TreeSize Free"  ; Id = "JAMSoftware.TreeSize.Free"  }
     )
 
     "AUDIO / VIDEO" = @(
-        @{ Name = "OBS Studio"  ; Id = "OBSProject.OBSStudio"         },
-        @{ Name = "VirtualDJ"   ; Id = "AtomixProductions.VirtualDJ"   },
-        @{ Name = "VLC"         ; Id = "VideoLAN.VLC"                  },
-        @{ Name = "Handbrake"   ; Id = "HandBrake.HandBrake"           }
+        @{ Name = "OBS Studio" ; Id = "OBSProject.OBSStudio"        },
+        @{ Name = "VirtualDJ"  ; Id = "AtomixProductions.VirtualDJ"  },
+        @{ Name = "VLC"        ; Id = "VideoLAN.VLC"                 },
+        @{ Name = "Handbrake"  ; Id = "HandBrake.HandBrake"          }
     )
 
     "DEVELOPPEMENT" = @(
-        @{ Name = "VS Code"     ; Id = "Microsoft.VisualStudioCode" },
-        @{ Name = "Git"         ; Id = "Git.Git"                    },
-        @{ Name = "Windows Terminal" ; Id = "Microsoft.WindowsTerminal" }
+        @{ Name = "VS Code"          ; Id = "Microsoft.VisualStudioCode"  },
+        @{ Name = "Git"              ; Id = "Git.Git"                     },
+        @{ Name = "Windows Terminal" ; Id = "Microsoft.WindowsTerminal"   }
     )
 }
 
@@ -60,125 +64,259 @@ $menu = [ordered]@{
 #  MOTEUR — Ne pas modifier sauf si tu maîtrises PowerShell
 # ==============================================================================
 
-# ── Couleurs centralisées ──────────────────────────────────────────────────────
 $C = @{
-    Title    = 'Magenta'
-    Header   = 'Cyan'
-    Sub      = 'DarkCyan'
-    Num      = 'Yellow'
-    OK       = 'Green'
-    Warn     = 'DarkYellow'
-    Err      = 'Red'
-    Dim      = 'DarkGray'
-    Default  = 'Gray'
+    Title   = 'Magenta'
+    Header  = 'Cyan'
+    Sub     = 'DarkCyan'
+    Num     = 'Yellow'
+    OK      = 'Green'
+    Warn    = 'DarkYellow'
+    Err     = 'Red'
+    Dim     = 'DarkGray'
+    Default = 'Gray'
+    New     = 'Green'
+    Old     = 'DarkYellow'
 }
 
-# ── Récupération de toutes les versions installées en un seul appel ───────────
+$FallbackUrls = @{
+    "Elgato" = "https://www.elgato.com/fr/fr/s/downloads"
+    # "Logitech" = "https://support.logi.com/hc/fr/categories/360001751833"
+}
+
+# ── Versions installées (un seul appel winget list) ───────────────────────────
 function Get-AllInstalledVersions {
     $map = @{}
     try {
         $raw = winget list --accept-source-agreements 2>$null
         foreach ($line in $raw) {
-            # winget list : colonnes séparées par des espaces multiples
             if ($line -match '^\s*(.+?)\s{2,}(\S+)\s{2,}(\S+)') {
                 $id  = $Matches[2].Trim()
                 $ver = $Matches[3].Trim()
                 if ($id -and $ver) { $map[$id] = $ver }
             }
         }
-    } catch { <# silencieux si winget indisponible #> }
+    } catch {}
     return $map
 }
 
-# ── Aplatit un groupe en liste d'apps (ignore les sous-groupes) ───────────────
+# ── Version disponible sur une source donnée ──────────────────────────────────
+function Get-AvailableVersion {
+    param($Id, $Source)
+    try {
+        $raw = winget search --id $Id --exact --source $Source `
+               --accept-source-agreements 2>$null | Select-String $Id
+        if ($raw) {
+            $parts = ($raw -split '\s{2,}') | Where-Object { $_ -ne '' }
+            if ($parts.Count -ge 3) { return $parts[2].Trim() }
+        }
+    } catch {}
+    return $null
+}
+
+# ── Aplatit groupe → liste d'apps ─────────────────────────────────────────────
 function Get-FlatApps {
     param($GroupItems)
     $list = @()
     foreach ($item in $GroupItems) {
         if ($item.ContainsKey('Sub')) { $list += $item.Apps }
-        else                          { $list += $item      }
+        else                          { $list += $item }
     }
     return $list
 }
 
-# ── Affiche un badge version ──────────────────────────────────────────────────
+# ── Badge version installée ───────────────────────────────────────────────────
 function Write-VersionBadge {
     param($Id, $Versions)
-    if ($Versions.ContainsKey($Id)) {
+    if ($Id -and $Versions.ContainsKey($Id)) {
         Write-Host " [" -NoNewline -ForegroundColor $C.Dim
         Write-Host $Versions[$Id] -NoNewline -ForegroundColor $C.OK
         Write-Host "]" -NoNewline -ForegroundColor $C.Dim
-    } else {
+    } elseif ($Id) {
         Write-Host " [non installé]" -NoNewline -ForegroundColor $C.Dim
+    } else {
+        Write-Host " [lien web]" -NoNewline -ForegroundColor $C.Dim
     }
 }
 
-# ── URL de fallback par éditeur ───────────────────────────────────────────────
-$FallbackUrls = @{
-    "Elgato" = "https://www.elgato.com/fr/fr/s/downloads"
-    # Ajoute d'autres éditeurs ici si besoin :
-    # "Logitech" = "https://support.logi.com/hc/fr/categories/360001751833"
-}
-
-# ── Devine l'URL de fallback depuis l'ID winget (ex: "Elgato.StreamDeck" → "Elgato") ──
+# ── Fallback URL ──────────────────────────────────────────────────────────────
 function Get-FallbackUrl {
     param($Id, $AppUrl)
-    if ($AppUrl) { return $AppUrl }                         # URL manuelle prioritaire
-    $publisher = $Id -split '\.' | Select-Object -First 1  # "Elgato.StreamDeck" → "Elgato"
-    if ($FallbackUrls.ContainsKey($publisher)) { return $FallbackUrls[$publisher] }
+    if ($AppUrl) { return $AppUrl }
+    $pub = $Id -split '\.' | Select-Object -First 1
+    if ($FallbackUrls.ContainsKey($pub)) { return $FallbackUrls[$pub] }
     return $null
 }
 
-# ── Installe une app et retourne $true si succès ──────────────────────────────
-function Install-App {
-    param($App)
-    Write-Host ""
+# ── Compare winget vs msstore et propose le choix ────────────────────────────
+function Show-SourceComparison {
+    param($App, $InstalledVersions)
 
-    # Entrée de type lien uniquement (pas d'ID winget)
-    if (-not $App.Id -and $App.Url) {
-        Write-Host "  ► Ouverture de la page de téléchargement pour $($App.Name)..." `
-            -ForegroundColor $C.Warn
+    # App lien web uniquement → pas de comparaison
+    if (-not $App.Id) {
+        Write-Host ""
+        Write-Host "  ► Ouverture du navigateur pour $($App.Name)..." -ForegroundColor $C.Warn
         Start-Process $App.Url
         Write-Host "  ↗ Navigateur ouvert." -ForegroundColor $C.Warn
-        return $true
+        return
     }
 
-    Write-Host "  ► Installation de $($App.Name)..." -ForegroundColor $C.OK
-    winget install --id $App.Id --exact --silent `
+    Write-Host ""
+    Write-Host "  Recherche des versions disponibles..." -ForegroundColor $C.Dim
+
+    $verWinget  = Get-AvailableVersion -Id $App.Id -Source "winget"
+    $verMsstore = Get-AvailableVersion -Id $App.Id -Source "msstore"
+    $verInstall = if ($InstalledVersions.ContainsKey($App.Id)) { $InstalledVersions[$App.Id] } else { $null }
+
+    # ── Tableau comparatif ──
+    Clear-Host
+    Write-Host ""
+    Write-Host "  ╔══════════════════════════════════════════╗" -ForegroundColor $C.Header
+    Write-Host "  ║  $($App.Name.PadRight(42))║" -ForegroundColor $C.Header
+    Write-Host "  ╚══════════════════════════════════════════╝" -ForegroundColor $C.Header
+    Write-Host ""
+
+    # Ligne installée
+    if ($verInstall) {
+        Write-Host "  Installée actuellement : " -NoNewline -ForegroundColor $C.Dim
+        Write-Host $verInstall -ForegroundColor $C.OK
+        Write-Host ""
+    }
+
+    Write-Host "  ┌─────────────┬──────────────────┬──────────────────────┐" -ForegroundColor $C.Dim
+    Write-Host "  │ " -NoNewline -ForegroundColor $C.Dim
+    Write-Host "Source      " -NoNewline -ForegroundColor $C.Default
+    Write-Host " │ " -NoNewline -ForegroundColor $C.Dim
+    Write-Host "Version dispo   " -NoNewline -ForegroundColor $C.Default
+    Write-Host " │ " -NoNewline -ForegroundColor $C.Dim
+    Write-Host "Statut              " -NoNewline -ForegroundColor $C.Default
+    Write-Host " │" -ForegroundColor $C.Dim
+    Write-Host "  ├─────────────┼──────────────────┼──────────────────────┤" -ForegroundColor $C.Dim
+
+    # Détermine quelle version est la plus récente
+    $newerSource = $null
+    if ($verWinget -and $verMsstore -and ($verWinget -ne $verMsstore)) {
+        try {
+            $vW = [System.Version]($verWinget  -replace '[^\d.]','')
+            $vM = [System.Version]($verMsstore -replace '[^\d.]','')
+            $newerSource = if ($vW -gt $vM) { "winget" } else { "msstore" }
+        } catch { $newerSource = $null }
+    }
+
+    # Ligne winget
+    Write-Host "  │ " -NoNewline -ForegroundColor $C.Dim
+    Write-Host "[1] winget   " -NoNewline -ForegroundColor $C.Num
+    Write-Host " │ " -NoNewline -ForegroundColor $C.Dim
+    if ($verWinget) {
+        $col = if ($newerSource -eq "winget") { $C.New } else { $C.Default }
+        Write-Host $verWinget.PadRight(16) -NoNewline -ForegroundColor $col
+    } else {
+        Write-Host "non dispo       " -NoNewline -ForegroundColor $C.Dim
+    }
+    Write-Host " │ " -NoNewline -ForegroundColor $C.Dim
+    if (-not $verWinget) {
+        Write-Host "indisponible         " -NoNewline -ForegroundColor $C.Dim
+    } elseif ($newerSource -eq "winget") {
+        Write-Host "★ plus recent        " -NoNewline -ForegroundColor $C.New
+    } elseif ($newerSource -eq "msstore") {
+        Write-Host "version ancienne     " -NoNewline -ForegroundColor $C.Old
+    } elseif ($verInstall -and $verInstall -eq $verWinget) {
+        Write-Host "deja installe        " -NoNewline -ForegroundColor $C.OK
+    } else {
+        Write-Host "identique            " -NoNewline -ForegroundColor $C.Default
+    }
+    Write-Host " │" -ForegroundColor $C.Dim
+
+    # Ligne msstore
+    Write-Host "  │ " -NoNewline -ForegroundColor $C.Dim
+    Write-Host "[2] msstore  " -NoNewline -ForegroundColor $C.Num
+    Write-Host " │ " -NoNewline -ForegroundColor $C.Dim
+    if ($verMsstore) {
+        $col = if ($newerSource -eq "msstore") { $C.New } else { $C.Default }
+        Write-Host $verMsstore.PadRight(16) -NoNewline -ForegroundColor $col
+    } else {
+        Write-Host "non dispo       " -NoNewline -ForegroundColor $C.Dim
+    }
+    Write-Host " │ " -NoNewline -ForegroundColor $C.Dim
+    if (-not $verMsstore) {
+        Write-Host "indisponible         " -NoNewline -ForegroundColor $C.Dim
+    } elseif ($newerSource -eq "msstore") {
+        Write-Host "★ plus recent        " -NoNewline -ForegroundColor $C.New
+    } elseif ($newerSource -eq "winget") {
+        Write-Host "version ancienne     " -NoNewline -ForegroundColor $C.Old
+    } elseif ($verInstall -and $verInstall -eq $verMsstore) {
+        Write-Host "deja installe        " -NoNewline -ForegroundColor $C.OK
+    } else {
+        Write-Host "identique            " -NoNewline -ForegroundColor $C.Default
+    }
+    Write-Host " │" -ForegroundColor $C.Dim
+    Write-Host "  └─────────────┴──────────────────┴──────────────────────┘" -ForegroundColor $C.Dim
+
+    Write-Host ""
+    Write-Host "  [" -NoNewline -ForegroundColor $C.Dim
+    Write-Host "1" -NoNewline -ForegroundColor $C.Num
+    Write-Host "] winget   [" -NoNewline -ForegroundColor $C.Dim
+    Write-Host "2" -NoNewline -ForegroundColor $C.Num
+    Write-Host "] msstore   [" -NoNewline -ForegroundColor $C.Dim
+    Write-Host "0" -NoNewline -ForegroundColor $C.Dim
+    Write-Host "] Annuler" -ForegroundColor $C.Dim
+    Write-Host ""
+
+    $srcChoice = Read-Host "  Votre choix"
+
+    $sourceMap = @{ "1" = "winget" ; "2" = "msstore" }
+    if (-not $sourceMap.ContainsKey($srcChoice)) {
+        Write-Host "  Annulé." -ForegroundColor $C.Dim
+        return
+    }
+
+    $chosenSource = $sourceMap[$srcChoice]
+    $chosenVer    = if ($chosenSource -eq "winget") { $verWinget } else { $verMsstore }
+
+    if (-not $chosenVer) {
+        Write-Host "  ✖ Non disponible sur $chosenSource." -ForegroundColor $C.Err
+        return
+    }
+
+    Write-Host ""
+    Write-Host "  ► Installation de $($App.Name) via $chosenSource..." -ForegroundColor $C.OK
+    winget install --id $App.Id --exact --silent --source $chosenSource `
         --accept-source-agreements --accept-package-agreements
 
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "  ✔ $($App.Name) installé avec succès." -ForegroundColor $C.OK
-        return $true
-
+        Write-Host "  ✔ Installé avec succès ($chosenSource)." -ForegroundColor $C.OK
     } elseif ($LASTEXITCODE -eq -1978335189) {
-        Write-Host "  ✔ $($App.Name) est déjà à jour." -ForegroundColor $C.Warn
-        return $true
-
+        Write-Host "  ✔ Déjà à jour ($chosenSource)." -ForegroundColor $C.Warn
     } elseif ($LASTEXITCODE -eq -1978335212) {
-        # Package introuvable dans winget → fallback navigateur
         $url = Get-FallbackUrl -Id $App.Id -AppUrl $App.Url
-        Write-Host "  ✖ '$($App.Id)' introuvable dans winget." -ForegroundColor $C.Err
+        Write-Host "  ✖ Introuvable sur $chosenSource." -ForegroundColor $C.Err
         if ($url) {
             Write-Host "  ↗ Ouverture de la page de téléchargement..." -ForegroundColor $C.Warn
             Start-Process $url
-        } else {
-            Write-Host "    → Lance : winget search `"$($App.Name)`"" -ForegroundColor $C.Dim
         }
-        return $false
-
     } elseif ($LASTEXITCODE -eq -1978335193) {
-        Write-Host "  ✖ Erreur réseau. Vérifie ta connexion internet." -ForegroundColor $C.Err
-        return $false
-
+        Write-Host "  ✖ Erreur réseau." -ForegroundColor $C.Err
     } elseif ($LASTEXITCODE -eq -1978335210) {
         Write-Host "  ✖ Installation annulée." -ForegroundColor $C.Warn
-        return $false
-
     } else {
         Write-Host "  ✖ Échec (code $LASTEXITCODE)." -ForegroundColor $C.Err
-        return $false
     }
+}
+
+# ── Installe silencieusement (utilisé par "tout installer") ───────────────────
+function Install-AppAuto {
+    param($App, $Source)
+
+    if (-not $App.Id) {
+        if ($App.Url) { Start-Process $App.Url }
+        return $true
+    }
+
+    $src = if ($Source) { $Source } elseif ($App.Source) { $App.Source } else { "winget" }
+
+    winget install --id $App.Id --exact --silent --source $src `
+        --accept-source-agreements --accept-package-agreements 2>$null
+
+    return ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq -1978335189)
 }
 
 # ── Écran d'une catégorie ──────────────────────────────────────────────────────
@@ -186,12 +324,10 @@ function Show-Category {
     param($CatName, $GroupItems)
 
     while ($true) {
-        # Recharge les versions à chaque retour sur l'écran
         Write-Host ""
         Write-Host "  Chargement des versions..." -ForegroundColor $C.Dim
         $versions = Get-AllInstalledVersions
 
-        # Construit la liste plate numérotée
         $flatApps = @()
         Clear-Host
         Write-Host ""
@@ -202,8 +338,6 @@ function Show-Category {
 
         $idx = 1
         foreach ($item in $GroupItems) {
-
-            # ── Sous-groupe ──
             if ($item.ContainsKey('Sub')) {
                 Write-Host "  ── $($item.Sub) " -NoNewline -ForegroundColor $C.Sub
                 Write-Host ("─" * [Math]::Max(2, 38 - $item.Sub.Length)) -ForegroundColor $C.Dim
@@ -218,8 +352,6 @@ function Show-Category {
                     $idx++
                 }
                 Write-Host ""
-
-            # ── App directe ──
             } else {
                 Write-Host "  [" -NoNewline -ForegroundColor $C.Dim
                 Write-Host $idx -NoNewline -ForegroundColor $C.Num
@@ -238,10 +370,10 @@ function Show-Category {
         Write-Host "──────────────────────────────" -ForegroundColor $C.Dim
         Write-Host "  [" -NoNewline -ForegroundColor $C.Dim
         Write-Host "1-$total" -NoNewline -ForegroundColor $C.Num
-        Write-Host "]  Installer l'application correspondante" -ForegroundColor $C.Dim
+        Write-Host "]  Comparer les sources et installer" -ForegroundColor $C.Dim
         Write-Host "  [" -NoNewline -ForegroundColor $C.Dim
         Write-Host "a" -NoNewline -ForegroundColor $C.Num
-        Write-Host "]    Tout installer ($total apps)" -ForegroundColor $C.Dim
+        Write-Host "]    Tout installer via winget (auto)" -ForegroundColor $C.Dim
         Write-Host "  [" -NoNewline -ForegroundColor $C.Dim
         Write-Host "0" -NoNewline -ForegroundColor $C.Num
         Write-Host "]    Retour au menu principal" -ForegroundColor $C.Dim
@@ -249,41 +381,43 @@ function Show-Category {
 
         $choice = Read-Host "  Votre choix"
 
-        # Retour
         if ($choice -eq '0') { break }
 
-        # Tout installer
         if ($choice -eq 'a') {
             Write-Host ""
-            Write-Host "  ► Installation de toutes les apps ($total)..." -ForegroundColor $C.OK
+            Write-Host "  ► Installation de toutes les apps ($total) via winget..." -ForegroundColor $C.OK
             $ok = 0 ; $fail = 0
             foreach ($app in $flatApps) {
-                $result = Install-App -App $app
-                if ($result) { $ok++ } else { $fail++ }
+                Write-Host "  · $($app.Name)..." -NoNewline -ForegroundColor $C.Dim
+                $result = Install-AppAuto -App $app -Source "winget"
+                if ($result) {
+                    Write-Host " ✔" -ForegroundColor $C.OK
+                    $ok++
+                } else {
+                    Write-Host " ✖" -ForegroundColor $C.Err
+                    $fail++
+                }
             }
             Write-Host ""
-            Write-Host "  ✔ $ok succès" -ForegroundColor $C.OK -NoNewline
-            if ($fail -gt 0) { Write-Host "  ✖ $fail échec(s)" -ForegroundColor $C.Err -NoNewline }
+            Write-Host "  ✔ $ok succès" -NoNewline -ForegroundColor $C.OK
+            if ($fail -gt 0) { Write-Host "   ✖ $fail échec(s)" -NoNewline -ForegroundColor $C.Err }
             Write-Host ""
             Read-Host "`n  Appuyez sur Entrée pour continuer"
             continue
         }
 
-        # Numéro individuel
         if ($choice -match '^\d+$') {
             $n = [int]$choice
             if ($n -ge 1 -and $n -le $total) {
-                Install-App -App $flatApps[$n - 1] | Out-Null
+                Show-SourceComparison -App $flatApps[$n - 1] -InstalledVersions $versions
                 Read-Host "`n  Appuyez sur Entrée pour continuer"
             } else {
-                Write-Host "  ✖ Numéro invalide. Entrez un nombre entre 1 et $total." `
-                    -ForegroundColor $C.Err
+                Write-Host "  ✖ Numéro invalide. Entrez un nombre entre 1 et $total." -ForegroundColor $C.Err
                 Start-Sleep -Seconds 1.5
             }
             continue
         }
 
-        # Entrée non reconnue
         Write-Host "  ✖ Commande non reconnue : '$choice'" -ForegroundColor $C.Err
         Start-Sleep -Seconds 1.5
     }
@@ -296,11 +430,11 @@ while ($true) {
     Clear-Host
     Write-Host ""
     Write-Host "  ╔══════════════════════════════════════════╗" -ForegroundColor $C.Title
-    Write-Host "  ║     GESTIONNAIRE DE LOGICIELS  v2.0      ║" -ForegroundColor $C.Title
+    Write-Host "  ║     GESTIONNAIRE DE LOGICIELS  v3.0      ║" -ForegroundColor $C.Title
     Write-Host "  ╚══════════════════════════════════════════╝" -ForegroundColor $C.Title
     Write-Host ""
 
-    $keys = $menu.Keys  # [ordered] → ordre garanti
+    $keys = $menu.Keys
     $i = 1
     foreach ($key in $keys) {
         $appCount = (Get-FlatApps -GroupItems $menu[$key]).Count
@@ -333,8 +467,7 @@ while ($true) {
             $selectedKey = @($keys)[$n - 1]
             Show-Category -CatName $selectedKey -GroupItems $menu[$selectedKey]
         } else {
-            Write-Host "  ✖ Numéro invalide. Choisissez entre 1 et $($keys.Count)." `
-                -ForegroundColor $C.Err
+            Write-Host "  ✖ Numéro invalide. Choisissez entre 1 et $($keys.Count)." -ForegroundColor $C.Err
             Start-Sleep -Seconds 1.5
         }
         continue

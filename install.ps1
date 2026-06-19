@@ -59,9 +59,11 @@ $menu = [ordered]@{
 
     "ESSENTIELS" = @(
         @{ Sub = "MONITORING" ; Apps = @(
-            @{ Name = "HWiNFO"        ; Id = "REALiX.HWiNFO" },
-            @{ Name = "MSI Afterburner"; Id = "Guru3D.Afterburner" },
-            @{ Name = "OCCT"          ; Id = "OCBASE.OCCT" }
+            @{ Name = "HWiNFO"               ; Id = "REALiX.HWiNFO" },
+            @{ Name = "MSI Afterburner"      ; Id = "Guru3D.Afterburner" },
+            @{ Name = "OCCT"                 ; Id = "OCBASE.OCCT" },
+            @{ Name = "MSI Afterburner Beta" ; Id = "Guru3D.Afterburner.Beta" },
+            @{ Name = "OCCT Beta"            ; Id = "" ; Url = "https://www.ocbase.com/download" }
         )},
         @{ Sub = "UTILITAIRES" ; Apps = @(
             @{ Name = "MSI Center" ; Id = "Micro-StarInternational.MSICenter" },

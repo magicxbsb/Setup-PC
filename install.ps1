@@ -14,25 +14,26 @@ $menu = [ordered]@{
 
     "ELGATO" = @(
         @{ Sub = "STREAM DECK" ; Apps = @(
-            @{ Name = "Stream Deck"    ; Id = "Elgato.StreamDeck" },
-            @{ Name = "Wave Link"      ; Id = "Elgato.WaveLink"   },
-            @{ Name = "Studio"         ; Id = "Elgato.Studio"     },
-            @{ Name = "Control Center" ; Id = "Elgato.ControlCenter" },
-            @{ Name = "Marketplace Connect for OBS  ↗" ; Id = "" ; Url = "https://www.elgato.com/downloads" },
-            @{ Name = "Video Capture  ↗"               ; Id = "" ; Url = "https://www.elgato.com/downloads" }
+            @{ Name = "Stream Deck"                     ; Id = "Elgato.StreamDeck"    },
+            @{ Name = "Wave Link"                       ; Id = "Elgato.WaveLink"      },
+            @{ Name = "Studio"                          ; Id = "Elgato.Studio"        },
+            @{ Name = "Control Center"                  ; Id = "Elgato.ControlCenter" },
+            @{ Name = "Marketplace Connect for OBS  ^" ; Id = "" ; Url = "https://www.elgato.com/fr/fr/s/downloads" },
+            @{ Name = "Buttons  ^"                     ; Id = "" ; Url = "https://www.elgato.com/fr/fr/s/downloads" },
+            @{ Name = "Default Profile Galleon 100  ^" ; Id = "" ; Url = "https://www.elgato.com/fr/fr/s/downloads" }
         )},
         @{ Sub = "CAPTURE" ; Apps = @(
-            @{ Name = "4K Capture Utility"    ; Id = "Elgato.4KCaptureUtility"        },
-            @{ Name = "Camera Hub"            ; Id = "Elgato.CameraHub"               },
-            @{ Name = "Game Capture 4K60 Pro" ; Id = "Elgato.GameCapture.4K60ProMK2"  },
-            @{ Name = "Game Capture HD"       ; Id = "Elgato.GameCapture.HD"          },
-            @{ Name = "Game Capture HD60 S"   ; Id = "Elgato.GameCapture.HD60S"       }
+            @{ Name = "4K Capture Utility"     ; Id = "Elgato.4KCaptureUtility"        },
+            @{ Name = "Camera Hub"             ; Id = "Elgato.CameraHub"               },
+            @{ Name = "Video Capture  ^"       ; Id = "" ; Url = "https://www.elgato.com/fr/fr/s/downloads" },
+            @{ Name = "Game Capture 4K60 Pro"  ; Id = "Elgato.GameCapture.4K60ProMK2"  },
+            @{ Name = "Game Capture HD"        ; Id = "Elgato.GameCapture.HD"          },
+            @{ Name = "Game Capture HD60 S"    ; Id = "Elgato.GameCapture.HD60S"       }
         )},
         @{ Sub = "CAMERA" ; Apps = @(
             @{ Name = "EpocCam (drivers)" ; Id = "Elgato.EpocCam" }
         )}
     )
-
 
     "OUTILS SYSTEME" = @(
         @{ Name = "CPU-Z"          ; Id = "CPUID.CPU-Z"              },
@@ -112,23 +113,70 @@ function Write-VersionBadge {
     }
 }
 
+# ── URL de fallback par éditeur ───────────────────────────────────────────────
+$FallbackUrls = @{
+    "Elgato" = "https://www.elgato.com/fr/fr/s/downloads"
+    # Ajoute d'autres éditeurs ici si besoin :
+    # "Logitech" = "https://support.logi.com/hc/fr/categories/360001751833"
+}
+
+# ── Devine l'URL de fallback depuis l'ID winget (ex: "Elgato.StreamDeck" → "Elgato") ──
+function Get-FallbackUrl {
+    param($Id, $AppUrl)
+    if ($AppUrl) { return $AppUrl }                         # URL manuelle prioritaire
+    $publisher = $Id -split '\.' | Select-Object -First 1  # "Elgato.StreamDeck" → "Elgato"
+    if ($FallbackUrls.ContainsKey($publisher)) { return $FallbackUrls[$publisher] }
+    return $null
+}
+
 # ── Installe une app et retourne $true si succès ──────────────────────────────
 function Install-App {
     param($App)
     Write-Host ""
+
+    # Entrée de type lien uniquement (pas d'ID winget)
+    if (-not $App.Id -and $App.Url) {
+        Write-Host "  ► Ouverture de la page de téléchargement pour $($App.Name)..." `
+            -ForegroundColor $C.Warn
+        Start-Process $App.Url
+        Write-Host "  ↗ Navigateur ouvert." -ForegroundColor $C.Warn
+        return $true
+    }
+
     Write-Host "  ► Installation de $($App.Name)..." -ForegroundColor $C.OK
     winget install --id $App.Id --exact --silent `
         --accept-source-agreements --accept-package-agreements
+
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  ✔ $($App.Name) installé avec succès." -ForegroundColor $C.OK
         return $true
+
     } elseif ($LASTEXITCODE -eq -1978335189) {
-        # Code winget : déjà installé / à jour
         Write-Host "  ✔ $($App.Name) est déjà à jour." -ForegroundColor $C.Warn
         return $true
+
+    } elseif ($LASTEXITCODE -eq -1978335212) {
+        # Package introuvable dans winget → fallback navigateur
+        $url = Get-FallbackUrl -Id $App.Id -AppUrl $App.Url
+        Write-Host "  ✖ '$($App.Id)' introuvable dans winget." -ForegroundColor $C.Err
+        if ($url) {
+            Write-Host "  ↗ Ouverture de la page de téléchargement..." -ForegroundColor $C.Warn
+            Start-Process $url
+        } else {
+            Write-Host "    → Lance : winget search `"$($App.Name)`"" -ForegroundColor $C.Dim
+        }
+        return $false
+
+    } elseif ($LASTEXITCODE -eq -1978335193) {
+        Write-Host "  ✖ Erreur réseau. Vérifie ta connexion internet." -ForegroundColor $C.Err
+        return $false
+
+    } elseif ($LASTEXITCODE -eq -1978335210) {
+        Write-Host "  ✖ Installation annulée." -ForegroundColor $C.Warn
+        return $false
+
     } else {
-        Write-Host "  ✖ Échec (code $LASTEXITCODE). Vérifie ta connexion ou l'ID winget." `
-            -ForegroundColor $C.Err
+        Write-Host "  ✖ Échec (code $LASTEXITCODE)." -ForegroundColor $C.Err
         return $false
     }
 }

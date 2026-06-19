@@ -39,6 +39,10 @@ $menu = [ordered]@{
         )}
     )
 
+    "PLAYSTATION" = @(
+    @{ Name = "PS Remote Play" ; Id = "PlayStation.PSRemotePlay" }
+)
+
     "OUTILS SYSTEME" = @(
         @{ Name = "CPU-Z"          ; Id = "CPUID.CPU-Z"               },
         @{ Name = "Notepad++"      ; Id = "Notepad++.Notepad++"       },
@@ -80,6 +84,7 @@ $C = @{
 
 $FallbackUrls = @{
     "Elgato" = "https://www.elgato.com/fr/fr/s/downloads"
+    "PlayStation" = "https://www.playstation.com/fr-fr/remote-play/"
     # "Logitech" = "https://support.logi.com/hc/fr/categories/360001751833"
 }
 

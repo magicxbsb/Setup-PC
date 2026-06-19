@@ -17,7 +17,9 @@ $menu = [ordered]@{
             @{ Name = "Stream Deck"    ; Id = "Elgato.StreamDeck" },
             @{ Name = "Wave Link"      ; Id = "Elgato.WaveLink"   },
             @{ Name = "Studio"         ; Id = "Elgato.Studio"     },
-            @{ Name = "Control Center" ; Id = "Elgato.ControlCenter" }
+            @{ Name = "Control Center" ; Id = "Elgato.ControlCenter" },
+            @{ Name = "Marketplace Connect for OBS  ↗" ; Id = "" ; Url = "https://www.elgato.com/downloads" },
+            @{ Name = "Video Capture  ↗"               ; Id = "" ; Url = "https://www.elgato.com/downloads" }
         )},
         @{ Sub = "CAPTURE" ; Apps = @(
             @{ Name = "4K Capture Utility"    ; Id = "Elgato.4KCaptureUtility"        },

@@ -18,10 +18,10 @@ $menu = [ordered]@{
 
     "ELGATO" = @(
         @{ Sub = "STREAM DECK" ; Apps = @(
-            @{ Name = "Stream Deck"                     ; Id = "Elgato.StreamDeck"    },
-            @{ Name = "Wave Link"                       ; Id = "Elgato.WaveLink"      },
-            @{ Name = "Studio"                          ; Id = "Elgato.Studio"        },
-            @{ Name = "Control Center"                  ; Id = "Elgato.ControlCenter" },
+            @{ Name = "Stream Deck"                    ; Id = "Elgato.StreamDeck"    },
+            @{ Name = "Wave Link"                      ; Id = "Elgato.WaveLink"      },
+            @{ Name = "Studio"                         ; Id = "Elgato.Studio"        },
+            @{ Name = "Control Center"                 ; Id = "Elgato.ControlCenter" },
             @{ Name = "Marketplace Connect for OBS  ^" ; Id = "" ; Url = "https://www.elgato.com/fr/fr/s/downloads" },
             @{ Name = "Buttons  ^"                     ; Id = "" ; Url = "https://www.elgato.com/fr/fr/s/downloads" },
             @{ Name = "Default Profile Galleon 100  ^" ; Id = "" ; Url = "https://www.elgato.com/fr/fr/s/downloads" }
@@ -48,7 +48,7 @@ $menu = [ordered]@{
         )},
         @{ Sub = "PLUGINS & EXTENSIONS" ; Apps = @(
             @{ Name = "StreamElements SE LIVE  ^" ; Id = "" ; Url = "https://streamelements.com/selive"  },
-            @{ Name = "Social Stream Ninja    ^"  ; Id = "" ; Url = "https://socialstream.ninja/landing" },
+            @{ Name = "Social Stream Ninja     ^" ; Id = "" ; Url = "https://socialstream.ninja/landing" },
             @{ Name = "Streamlabs Plugin OBS   ^" ; Id = "" ; Url = "https://streamlabs.com/fr-fr/obs-plugin" }
         )},
         @{ Sub = "MATERIEL & AUDIO" ; Apps = @(
@@ -63,11 +63,11 @@ $menu = [ordered]@{
             @{ Name = "MSI Afterburner"      ; Id = "Guru3D.Afterburner" },
             @{ Name = "OCCT"                 ; Id = "OCBASE.OCCT" },
             @{ Name = "MSI Afterburner Beta" ; Id = "Guru3D.Afterburner.Beta" },
-            @{ Name = "OCCT Beta"            ; Id = "" ; Url = "https://www.ocbase.com/download" }
+            @{ Name = "OCCT Beta  ^"         ; Id = "" ; Url = "https://www.ocbase.com/download" }
         )},
         @{ Sub = "UTILITAIRES" ; Apps = @(
-            @{ Name = "SignalRGB"  ; Id ="" ; Url = "https://signalrgb.com/" },
-            @{ Name = "Encrypto"   ; Id = "MacPaw.Encrypto" }
+            @{ Name = "SignalRGB  ^"  ; Id ="" ; Url = "https://signalrgb.com/" },
+            @{ Name = "Encrypto"      ; Id = "MacPaw.Encrypto" }
         )}
     )
 

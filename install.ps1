@@ -53,7 +53,7 @@ $menu = [ordered]@{
     )},
     @{ Sub = "MATERIEL & AUDIO" ; Apps = @(
         @{ Name = "NVIDIA Broadcast  ^"             ; Id = "" ; Url = "https://www.nvidia.com/fr-fr/geforce/broadcasting/broadcast-app/" },
-        @{ Name = "StreamElements Ground Control ^" ; Id = "" ; Url = "https://www.ground-control.io/" }
+        @{ Name = "StreamElements Ground Control ^" ; Id = "" ; Url = "https://streamelements.com/groundcontrol" }
     )}
 )
 

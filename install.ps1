@@ -1,56 +1,68 @@
 # ==============================================================================
-# CONFIGURATION HIÉRARCHIQUE
+# CONFIGURATION : Ajoute tes logiciels ici
+# Pour trouver l'ID exact : tape 'winget search "NomDuLogiciel"' dans ta console
 # ==============================================================================
-$structure = [ordered]@{
-    "ELGATO" = [ordered]@{
-        "STREAM DECK" = @(
-            @{ Name = "Stream Deck"; Id = "Elgato.StreamDeck" },
-            @{ Name = "Wave Link"; Id = "Elgato.WaveLink" }
-        )
-    }
-    "OUTILS" = [ordered]@{
-        "SYSTEME" = @(
-            @{ Name = "CPU-Z"; Id = "CPUID.CPU-Z" }
-        )
-    }
+$menu = @{
+    "STREAM DECK" = @(
+        @{ Name = "Elgato Stream Deck"; Id = "Elgato.StreamDeck" },
+        @{ Name = "Elgato Wave Link"; Id = "Elgato.WaveLink" }
+    )
+    "OUTILS SYSTEME" = @(
+        @{ Name = "CPU-Z"; Id = "CPUID.CPU-Z" },
+        @{ Name = "Notepad++"; Id = "Notepad++.Notepad++" },
+        @{ Name = "Process Lasso"; Id = "Bitsum.ProcessLasso" }
+    )
+    "AUDIO / VIDEO" = @(
+        @{ Name = "OBS Studio"; Id = "OBSProject.OBSStudio" },
+        @{ Name = "VirtualDJ"; Id = "AtomixProductions.VirtualDJ" }
+    )
 }
 
 # ==============================================================================
-# MOTEUR DE NAVIGATION (Récursif)
+# MOTEUR DU SCRIPT (Ne pas modifier sauf si tu maîtrises PowerShell)
 # ==============================================================================
-function Show-Menu {
-    param($parentName, $items)
-    
+function Get-Version {
+    param($Id)
+    $check = winget list --id $Id --exact --accept-source-agreements 2>$null | Select-String $Id
+    if ($check) { return (-split $check)[2] }
+    return "Non installé"
+}
+
+function Show-Category {
+    param($catName, $appList)
     while($true) {
         Clear-Host
-        Write-Host "--- $parentName ---" -ForegroundColor Cyan
-        $keys = $items.Keys | ForEach-Object { $_ }
-        for($i=0; $i -lt $keys.Count; $i++) { Write-Host "[$($i+1)] $($keys[$i])" }
-        Write-Host "[0] Retour"
+        Write-Host "--- CATEGORIE: $catName ---" -ForegroundColor Cyan
+        for($i=0; $i -lt $appList.Count; $i++) {
+            $ver = Get-Version -Id $appList[$i].Id
+            Write-Host "[$($i+1)] $($appList[$i].Name) (Actuel: $ver)"
+        }
+        Write-Host "[0] Retour au menu principal"
         
-        $choix = Read-Host "`nChoix"
-        if ($choix -eq "0") { return }
+        $choix = Read-Host "`nEntrez le numéro pour installer"
+        if ($choix -eq "0") { break }
         if ($choix -match '^\d+$') {
             $idx = [int]$choix - 1
-            if ($idx -ge 0 -and $idx -lt $keys.Count) {
-                $targetKey = $keys[$idx]
-                $target = $items[$targetKey]
-                
-                # Si c'est une liste d'apps (tableau), on installe
-                if ($target -is [array]) {
-                    foreach($app in $target) {
-                        Write-Host "Installation de $($app.Name)..." -ForegroundColor Green
-                        winget install --id $app.Id --exact --silent --accept-source-agreements
-                    }
-                    Read-Host "Terminé. Entrée pour continuer."
-                } else {
-                    # Sinon, on descend dans le sous-menu
-                    Show-Menu -parentName $targetKey -items $target
-                }
+            if ($idx -ge 0 -and $idx -lt $appList.Count) {
+                $target = $appList[$idx]
+                Write-Host "Installation de $($target.Name)..." -ForegroundColor Green
+                winget install --id $target.Id --exact --silent --accept-source-agreements --accept-package-agreements
+                Read-Host "Appuyez sur Entrée pour continuer"
             }
         }
     }
 }
 
-# Lancement
-Show-Menu -parentName "MENU PRINCIPAL" -items $structure
+while ($true) {
+    Clear-Host
+    Write-Host "=== GESTIONNAIRE DE LOGICIELS (OFFICIEL) ===" -ForegroundColor Magenta
+    $keys = $menu.Keys | Sort-Object
+    for ($i=0; $i -lt $keys.Count; $i++) { Write-Host "[$($i+1)] $($keys[$i])" }
+    Write-Host "[q] Quitter"
+    
+    $rep = Read-Host "`nSelectionner une categorie"
+    if ($rep -eq 'q') { break }
+    if ($rep -match '^\d+$' -and [int]$rep -le $keys.Count) {
+        Show-Category -catName $keys[[int]$rep - 1] -appList $menu[$keys[[int]$rep - 1]]
+    }
+}
